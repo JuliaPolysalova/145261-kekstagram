@@ -3,12 +3,11 @@
 //1
 var NUMBER_PHOTOS = 25;
 
-function getPhotos(numberPhotos) {
+function getPhotos(NUMBER_PHOTOS) {
     var photoArray = [];
 
-    for (var i = 0; i < numberPhotos; i++) {
+    for (var i = 0; i < NUMBER_PHOTOS; i++) {
         var randomLikes = Math.ceil(Math.random() * (200 - 15) + 15);
-        var randomComments = getComment();
 
         photoArray[i] = {};
         photoArray[i].url = 'photos/' + (i + 1) + '.jpg';
@@ -29,7 +28,7 @@ var commentsArray = [
     'Лица у людей на фотке перекошены, как-будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
 
-var getComment = function () {
+var randomComments = function () {
     return (commentsArray[Math.floor(Math.random() * commentsArray.length)]);
 }
 
@@ -38,7 +37,7 @@ var pictureTemplate = document.querySelector('#picture-template').content;
 function createPhotoElement(photo) {
     var photoElement = pictureTemplate.cloneNode(true);
 
-    photoElement.querySelector('img').src = photo.url;
+    photoElement.querySelector('img').src = photoArray.url;
     photoElement.querySelector('.picture-comments').textContent = photo.comments.length;
     photoElement.querySelector('.picture-likes').textContent = photo.likes;
 
@@ -52,7 +51,7 @@ function addPhotos(element, photoArray) {
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < photoArray.length; i++) {
-        var photoElement = createPhotoElement(photos[i]);
+        var photoElement = createPhotoElement(photo[i]);
         fragment.appendChild(photoElement);
     }
 
