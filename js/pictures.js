@@ -73,20 +73,10 @@ function getUniqueClickListener(photoData) {
     }
 }
 
-function getUniqueKeyDownListener(photoData) {
-    return function(evt) {
-        evt.preventDefault();
-        if (isActivationEvent(evt)) {
-            openPicture(photoData);
-        }
-    }
-}
-
 function initEventListenersForPhotos (photoObjectsData) {
     //При нажатии на любой из элементов .picture должен показываться элемент .gallery-overlay с подробным описанием картинки
     for (var i = 0; i < picturesContainerAll.length; i++) {
         picturesContainerAll[i].addEventListener('click', getUniqueClickListener(photoObjectsData[i]) );
-        picturesContainerAll[i].addEventListener('keydown', getUniqueKeyDownListener(photoObjectsData[i]));
     }
 }
 
