@@ -17,6 +17,18 @@ var uploadFormCancel = document.querySelector('.upload-form-cancel'); //BBEPX
 var uploadFormSubmit = document.querySelector('.upload-form-submit'); //вверх
 var uploadFormDescription = document.querySelector('.upload-form-description'); //BBEPX
 
+// блок формы кадрирования
+var filterForm = document.querySelector('.upload-filter');
+var filterFormMinusBtn = filterForm.querySelector('.upload-resize-controls-button-dec');
+var filterFormPlusBtn = filterForm.querySelector('.upload-resize-controls-button-inc');
+var filterFormPreview = filterForm.querySelector('.filter-image-preview');
+var filterFormResizeInput = filterForm.querySelector('input[type="text"]');
+
+//размер изображения
+var MAX_RESIZE = '100%';
+var MIN_RESIZE = '25%';
+var STEP_RESIZE = 25;
+
 function getPhotosObjects(photosNumber) {
     var commentsArray = [
         'Всё отлично!',
@@ -53,7 +65,6 @@ function createPhotoElement(photoData) {
 
     return photoElement;
 }
-
 
 function addPhotos(containerElement, photoDataArray) {
     var fragment = document.createDocumentFragment();
@@ -172,4 +183,35 @@ uploadFormDescription.addEventListener('keydown', function(evt) {
     if (evt.keyCode === ESCAPE_KEY_CODE) {
         evt.stopPropagation();
     }
+});
+
+//Изменение масштаба изображения
+filterFormPlusBtn.addEventListener('click', function(evt) {
+    setScale(MAX_RESIZE, 1);
+});
+
+filterFormMinusBtn.addEventListener('click', function(evt){
+    setScale(MIN_RESIZE, 0);
+});
+
+function setScale(sizeLimit, sign) {
+    var stepSize;
+    var sizeValue;
+    if (filterFormResizeInput.value !== sizeLimit) {
+        stepSize = sign ? STEP_RESIZE : -STEP_RESIZE;
+        sizeValue = parseInt(filterFormResizeInput.value, 10) + stepSize;
+        filterFormResizeInput.setAttribute('value', sizeValue + '%');
+        filterFormPreview.style.transform = 'scale(' + sizeValue / 100 + ')';
+    }
+}
+
+// установка фильтра
+function setFilter(evt) {
+    if (evt.target.checked) {
+        filterFormPreview.className = 'filter-image-preview filter-' + evt.target.value;
+    }
+}
+
+filterControls.addEventListener('click', function(evt) {
+    setFilter(evt);
 });
