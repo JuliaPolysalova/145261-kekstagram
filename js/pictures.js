@@ -23,6 +23,8 @@ var filterFormMinusBtn = filterForm.querySelector('.upload-resize-controls-butto
 var filterFormPlusBtn = filterForm.querySelector('.upload-resize-controls-button-inc');
 var filterFormPreview = filterForm.querySelector('.filter-image-preview');
 var filterFormResizeInput = filterForm.querySelector('input[type="text"]');
+var filterControls = document.querySelector('.upload-filter-controls');
+var uploadImgForm = document.querySelector('.upload-image');
 
 //размер изображения
 var MAX_RESIZE = '100%';
@@ -93,11 +95,13 @@ function initEventListenersForPhotos (photoObjectsData) {
 
 function hideUploadOverlay(evt) {
     uploadOverlay.classList.add('invisible'); //закрытие формы кадрирования
+    clearFilterForm();
 }
 
 function showUploadOverlay(evt) {
     uploadOverlay.classList.remove('invisible'); //открытие ф. кадрирования
     document.addEventListener('keydown', onEscPressUpload);
+    uploadFormDescription.addEventListener('invalid', onFilterFormCommentsInvalid); //???валидация формы
 }
 
 function onEscPressUpload(evt) {
@@ -162,6 +166,7 @@ uploadForm.classList.remove('invisible');
 uploadFormCancel.addEventListener('click', function() {
     hideUploadOverlay();
 });
+
 uploadFormCancel.addEventListener('keydown', function(evt) {
     if (isActivationEvent(evt)){
         hideUploadOverlay();
@@ -215,3 +220,22 @@ function setFilter(evt) {
 filterControls.addEventListener('click', function(evt) {
     setFilter(evt);
 });
+
+function clearFilterForm() {
+    uploadImgForm.reset();
+    filterForm.reset();
+
+    filterFormResizeInput.setAttribute('value', '100%');
+    filterFormPreview.style.transform = 'scale(1)';
+
+    filterFormPreview.className = 'filter-image-preview';
+}
+
+
+function onFilterFormCommentsInvalid(evt) {
+    evt.target.style.outlineColor = 'red';}
+
+//uploadFormDescription.addEventListener('invalid', onFilterFormCommentsInvalid);
+
+
+
