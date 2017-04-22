@@ -17,6 +17,7 @@ var uploadFormCancel = document.querySelector('.upload-form-cancel'); //BBEPX
 var uploadFormSubmit = document.querySelector('.upload-form-submit'); //вверх
 var uploadFormDescription = document.querySelector('.upload-form-description'); //BBEPX
 
+
 // блок формы кадрирования
 var filterForm = document.querySelector('.upload-filter');
 var filterFormMinusBtn = filterForm.querySelector('.upload-resize-controls-button-dec');
@@ -30,6 +31,7 @@ var uploadImgForm = document.querySelector('.upload-image');
 var MAX_RESIZE = '100%';
 var MIN_RESIZE = '25%';
 var STEP_RESIZE = 25;
+
 
 function getPhotosObjects(photosNumber) {
     var commentsArray = [
@@ -68,6 +70,7 @@ function createPhotoElement(photoData) {
     return photoElement;
 }
 
+
 function addPhotos(containerElement, photoDataArray) {
     var fragment = document.createDocumentFragment();
 
@@ -101,7 +104,6 @@ function hideUploadOverlay(evt) {
 function showUploadOverlay(evt) {
     uploadOverlay.classList.remove('invisible'); //открытие ф. кадрирования
     document.addEventListener('keydown', onEscPressUpload);
-    uploadFormDescription.addEventListener('invalid', onFilterFormCommentsInvalid); //???валидация формы
 }
 
 function onEscPressUpload(evt) {
@@ -231,8 +233,3 @@ function clearFilterForm() {
     filterFormPreview.className = 'filter-image-preview';
 }
 
-
-function onFilterFormCommentsInvalid(evt) {
-    evt.target.style.outlineColor = 'red';}
-
-//uploadFormDescription.addEventListener('invalid', onFilterFormCommentsInvalid);
