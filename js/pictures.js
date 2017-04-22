@@ -101,7 +101,6 @@ function hideUploadOverlay(evt) {
 function showUploadOverlay(evt) {
     uploadOverlay.classList.remove('invisible'); //открытие ф. кадрирования
     document.addEventListener('keydown', onEscPressUpload);
-    uploadFormDescription.addEventListener('invalid', onFilterFormCommentsInvalid); //???валидация формы
 }
 
 function onEscPressUpload(evt) {
@@ -173,11 +172,6 @@ uploadFormCancel.addEventListener('keydown', function(evt) {
     };
 });
 
-
-uploadFormSubmit.addEventListener('click', function() {
-    hideUploadOverlay();
-})
-
 uploadFormSubmit.addEventListener('keydown', function(evt) {
     if (isActivationEvent(evt)){
         hideUploadOverlay();
@@ -231,8 +225,3 @@ function clearFilterForm() {
     filterFormPreview.className = 'filter-image-preview';
 }
 
-
-function onFilterFormCommentsInvalid(evt) {
-    evt.target.style.outlineColor = 'red';}
-
-//uploadFormDescription.addEventListener('invalid', onFilterFormCommentsInvalid);
