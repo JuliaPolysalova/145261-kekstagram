@@ -65,7 +65,7 @@
     }
 
     function onEscPressUpload(evt) {
-        if (evt.keyCode === ESCAPE_KEY_CODE) {
+        if (window.isEscape(evt)) {
             hideUploadOverlay();
         }
     }
@@ -73,11 +73,6 @@
     function showUploadOverlay(evt) {
         uploadOverlay.classList.remove('invisible'); //открытие ф. кадрирования
         document.addEventListener('keydown', onEscPressUpload);
-    }
-
-    function hideUploadOverlay(evt) {
-        uploadOverlay.classList.add('invisible');
-        clearFilterForm();
     }
 
     function init() {

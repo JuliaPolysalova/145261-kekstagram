@@ -85,4 +85,9 @@
         filterFormPreview.style.transform = 'scale(1)';
         filterFormPreview.className = 'filter-image-preview';
     }
+
+    function hideUploadOverlay(evt) {
+        uploadOverlay.classList.add('invisible');
+        clearFilterForm();
+    }
 })();
