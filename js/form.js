@@ -85,11 +85,4 @@
         filterFormPreview.style.transform = 'scale(1)';
         filterFormPreview.className = 'filter-image-preview';
     }
-
-    function onEscPressUpload(evt) {
-        if (isEscape(evt)) {
-            hideUploadOverlay();
-        }
-    }
-
 })();

@@ -64,6 +64,12 @@
         }
     }
 
+    function onEscPressUpload(evt) {
+        if (evt.keyCode === ESCAPE_KEY_CODE) {
+            hideUploadOverlay();
+        }
+    }
+
     function showUploadOverlay(evt) {
         uploadOverlay.classList.remove('invisible'); //открытие ф. кадрирования
         document.addEventListener('keydown', onEscPressUpload);
