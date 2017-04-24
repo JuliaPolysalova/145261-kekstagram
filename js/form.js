@@ -8,6 +8,7 @@
     var filterFormResizeInput = filterForm.querySelector('input[type="text"]');
     var filterControls = document.querySelector('.upload-filter-controls');
     var uploadImgForm = document.querySelector('.upload-image');
+    var uploadOverlay = document.querySelector('.upload-overlay');
 
     var uploadForm = document.querySelector('#upload-select-image');
     var uploadFormCancel = document.querySelector('.upload-form-cancel');
@@ -17,38 +18,16 @@
     var MAX_RESIZE = '100%';
     var MIN_RESIZE = '25%';
     var STEP_RESIZE = 25;
+    var ESCAPE_KEY_CODE = 27;
+    var ENTER_KEY_CODE = 13;
 
-    uploadForm.classList.remove('invisible');
-
-    uploadFormCancel.addEventListener('click', function() {
-        hideUploadOverlay();
-    });
-
-    uploadFormCancel.addEventListener('keydown', function(evt) {
-        if (isEnter(evt)){
-            hideUploadOverlay();
-        };
-    });
-
-    uploadFormSubmit.addEventListener('keydown', function(evt) {
-        if (isEnter(evt)){
-            hideUploadOverlay();
-        };
-    });
-
-    uploadFormDescription.addEventListener('keydown', function(evt) {
-        if (isEscape(evt)) {
-            evt.stopPropagation();
-        }
-    });
-
-    filterFormPlusBtn.addEventListener('click', function(evt) {
-        setScale(MAX_RESIZE, 1);
-    });
-
-    filterFormMinusBtn.addEventListener('click', function(evt){
-        setScale(MIN_RESIZE, 0);
-    });
+    function clearFilterForm() {
+        uploadImgForm.reset();
+        filterForm.reset();
+        filterFormResizeInput.setAttribute('value', '100%');
+        filterFormPreview.style.transform = 'scale(1)';
+        filterFormPreview.className = 'filter-image-preview';
+    }
 
     function setScale(sizeLimit, sign) {
         var stepSize;
@@ -62,27 +41,74 @@
     }
 
     function setFilter(evt) {
-        if (evt.target.checked) {
+        if (evt.target.localName === 'label') {
+            evt.target.click();
+        } else if (evt.target.localName === 'input' && evt.target.checked) {
             filterFormPreview.className = 'filter-image-preview filter-' + evt.target.value;
+        }        
+    }
+
+    function isEnter(evt) {
+        return evt.keyCode === ENTER_KEY_CODE;
+    }
+
+    function isEscape(evt) {
+        return evt.keyCode === ESCAPE_KEY_CODE;
+    }
+
+    function onEscPressUpload(evt) {
+        if (evt.keyCode === ESCAPE_KEY_CODE) {
+            hideUploadOverlay();
         }
     }
 
-    filterControls.addEventListener('click', function(evt) {
-        setFilter(evt);
-    });
-
-    filterControls.addEventListener('keydown', function(evt) {
-        if (isEnter(evt)){
-            setFilter();
-            //console.log('hi');
-        }
-    });
-
-    function clearFilterForm() {
-        uploadImgForm.reset();
-        filterForm.reset();
-        filterFormResizeInput.setAttribute('value', '100%');
-        filterFormPreview.style.transform = 'scale(1)';
-        filterFormPreview.className = 'filter-image-preview';
+    function showUploadOverlay(evt) {
+        uploadOverlay.classList.remove('invisible'); //открытие ф. кадрирования
+        document.addEventListener('keydown', onEscPressUpload);
     }
+
+    function hideUploadOverlay(evt) {
+        uploadOverlay.classList.add('invisible');
+        clearFilterForm();
+    }
+
+    function init () {
+        uploadForm.classList.remove('invisible');
+
+        uploadFormCancel.addEventListener('click', function() {
+            hideUploadOverlay();
+        });
+
+        uploadFormDescription.addEventListener('keydown', function(evt) {
+            if (isEscape(evt)) {
+                evt.stopPropagation();
+            }
+        });
+
+        filterFormPlusBtn.addEventListener('click', function(evt) {
+            setScale(MAX_RESIZE, 1);
+        });
+
+        filterFormMinusBtn.addEventListener('click', function(evt){
+            setScale(MIN_RESIZE, 0);
+        });
+
+        filterControls.addEventListener('click', function(evt) {
+            setFilter(evt);
+        });
+
+        filterControls.addEventListener('keydown', function(evt) {
+            if (isEnter(evt)){
+                //evt.preventDefault();
+                setFilter(evt);
+            }
+        });
+
+        document.getElementById('upload-file').addEventListener('change', showUploadOverlay);
+
+        hideUploadOverlay();
+    }
+
+    init();
+
 })();
