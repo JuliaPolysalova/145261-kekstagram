@@ -33,4 +33,4 @@ window.data = (function () {
     return {
         getData : getPhotosObjects
     }
-})();
+})();   
