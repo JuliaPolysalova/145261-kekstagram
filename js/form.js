@@ -21,6 +21,9 @@
     var ESCAPE_KEY_CODE = 27;
     var ENTER_KEY_CODE = 13;
 
+    var currentFilter = null;
+    var currentFilterValue = 1;
+
     function clearFilterForm() {
         uploadImgForm.reset();
         filterForm.reset();
@@ -40,12 +43,102 @@
         }
     }
 
+
+    var filterLevelScale = document.querySelector('.upload-filter-level-line');
+    var filterLevelValue = document.querySelector('.upload-filter-level-val');
+    var filterLevelPin = document.querySelector('.upload-filter-level-pin');
+
+    //var filterCoordinateStart = filterScaleCoordinates.left;
+    //var filterCoordinateEnd = filterScaleCoordinates.right;
+    var filterCoordinateX;
+    var filterScaleCoordinates = filterLevelScale.getBoundingClientRect();
+
+    var onFilterScalePinMousedown = function (evt) {
+        evt.preventDefault();
+        filterCoordinateX = evt.clientX;
+
+        document.addEventListener('mousemove', onFilterScalePinMouseMove);
+        document.addEventListener('mouseup', onFilterScalePinMouseUp);
+    };
+
+    var onFilterScalePinMouseMove = function (evt) {
+        evt.preventDefault();
+        var shiftCoordinateX = filterCoordinateX - evt.clientX;
+        var newValueForElementStyle = filterLevelPin.offsetLeft - shiftCoordinateX + 'px';
+        filterCoordinateX = evt.clientX;
+        if (filterCoordinateX >= filterCoordinateStart && filterCoordinateX <= filterCoordinateEnd) {
+            filterLevelPin.style.left = newValueForElementStyle;
+            filterLevelValue.style.width = newValueForElementStyle;
+            changeFilterLevel(filterCoordinateX);
+        } else if (filterCoordinateX < filterCoordinateStart) {
+            filterCoordinateX = filterCoordinateStart;
+        } else if (filterCoordinateX > filterCoordinateEnd) {
+            filterCoordinateX = filterCoordinateEnd;
+        }
+    };
+
+    var onFilterScalePinMouseUp = function (evt) {
+        evt.preventDefault();
+        document.removeEventListener('mousemove', onFilterScalePinMouseMove);
+        document.removeEventListener('mouseup', onFilterScalePinMouseUp);
+    };
+
+    filterLevelPin.addEventListener('mousedown', onFilterScalePinMousedown);
+
+    function changeFilterLevel(coordinate) {
+        var currentFilter = filterForm.querySelector('input[type=radio]:checked');
+        var filterName = currentFilter.value;
+        var _coordinate = coordinate - filterScaleCoordinates.left;
+        var coeficient = '';
+        var styleFilter = '';
+        var unit = '';
+        switch (filterName) {
+            case 'chrome':
+                coeficient = 1;
+                styleFilter = 'grayscale';
+                break;
+            case 'sepia':
+                coeficient = 1;
+                styleFilter = 'sepia';
+                break;
+            case 'marvin':
+                coeficient = 100;
+                styleFilter = 'invert';
+                unit = '%';
+                break;
+            case 'phobos':
+                coeficient = 3;
+                styleFilter = 'blur';
+                unit = 'px';
+                break;
+            case 'heat':
+                coeficient = 3;
+                styleFilter = 'brightness';
+                break;
+            default:
+                coeficient = '';
+                styleFilter = 'none';
+        }
+        var level = _coordinate / (filterScaleCoordinates.width / coeficient);
+        picturePreview.style.filter = styleFilter + '(' + level + unit + ')';
+    }
+
     function setFilter(evt) {
         if (evt.target.localName === 'label') {
             evt.target.click();
         } else if (evt.target.localName === 'input' && evt.target.checked) {
+            if (currentFilter !== evt.target.value) {
+                currentFilterValue = 1;
+                currentFilter = evt.target.value;
+                if(currentFilter == 'none') {
+                    filterControls.classList.add('invisble');
+                } else {
+                    filterControls.classList.remove('invisble');
+                }
+                console.log(currentFilter);
+            }
             filterFormPreview.className = 'filter-image-preview filter-' + evt.target.value;
-        }        
+        }
     }
 
     function isEnter(evt) {
@@ -65,6 +158,7 @@
     function showUploadOverlay(evt) {
         uploadOverlay.classList.remove('invisible'); //открытие ф. кадрирования
         document.addEventListener('keydown', onEscPressUpload);
+        filterControls.classList.add('invisble');
     }
 
     function hideUploadOverlay(evt) {
