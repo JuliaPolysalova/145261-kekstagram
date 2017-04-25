@@ -24,15 +24,6 @@
     var currentFilter = null;
     var currentFilterValue = 1;
 
-    var filterLevelScale = document.querySelector('.upload-filter-level-line');
-    var filterLevelValue = document.querySelector('.upload-filter-level-val');
-    var filterLevelPin = document.querySelector('.upload-filter-level-pin');
-
-    //var filterCoordinateStart = filterScaleCoordinates.left;
-    //var filterCoordinateEnd = filterScaleCoordinates.right;
-    var filterCoordinateX;
-    var filterScaleCoordinates = filterLevelScale.getBoundingClientRect();
-
     function clearFilterForm() {
         uploadImgForm.reset();
         filterForm.reset();
@@ -52,6 +43,15 @@
         }
     }
 
+    var filterLevel = document. querySelector('.upload-filter-level')
+    var filterLevelScale = document.querySelector('.upload-filter-level-line');
+    var filterLevelValue = document.querySelector('.upload-filter-level-val');
+    var filterLevelPin = document.querySelector('.upload-filter-level-pin');
+
+    //var filterCoordinateStart = filterScaleCoordinates.left;
+    //var filterCoordinateEnd = filterScaleCoordinates.right;
+    var filterCoordinateX;
+    var filterScaleCoordinates = filterLevelScale.getBoundingClientRect();
 
     var onFilterScalePinMousedown = function (evt) {
         evt.preventDefault();
@@ -131,9 +131,9 @@
                 currentFilterValue = 1;
                 currentFilter = evt.target.value;
                 if(currentFilter == 'none') {
-                    filterControls.classList.add('invisble');
+                    filterLevel.classList.add('invisible');
                 } else {
-                    filterControls.classList.remove('invisble');
+                    filterLevel.classList.remove('invisible');
                 }
                 console.log(currentFilter);
             }
@@ -158,7 +158,6 @@
     function showUploadOverlay(evt) {
         uploadOverlay.classList.remove('invisible'); //открытие ф. кадрирования
         document.addEventListener('keydown', onEscPressUpload);
-        filterControls.classList.add('invisble');
     }
 
     function hideUploadOverlay(evt) {
@@ -167,6 +166,8 @@
     }
 
     function init () {
+        filterLevel.classList.add('invisible');
+
         uploadForm.classList.remove('invisible');
 
         uploadFormCancel.addEventListener('click', function() {
