@@ -23,6 +23,11 @@
 
     var currentFilter = null;
     var currentFilterValue = 1;
+  
+    var filterLevel = document.querySelector('.upload-filter-level')
+    var filterLevelLine = document.querySelector('.upload-filter-level-line');
+    var filterLevelValue = document.querySelector('.upload-filter-level-val');
+    var filterPinHandler = document.querySelector('.upload-filter-level-pin'); //находим что перетаскивать
 
     function clearFilterForm() {
         uploadImgForm.reset();
@@ -42,11 +47,6 @@
             filterFormPreview.style.transform = 'scale(' + sizeValue / 100 + ')';
         }
     }
-
-    var filterLevel = document.querySelector('.upload-filter-level')
-    var filterLevelLine = document.querySelector('.upload-filter-level-line');
-    var filterLevelValue = document.querySelector('.upload-filter-level-val');
-    var filterPinHandler = document.querySelector('.upload-filter-level-pin'); //находим что перетаскивать
 
     function setSliderCoords (value) { // в пикселях
         filterPinHandler.style.left = value + 'px'; //коорд относит левого
