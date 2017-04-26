@@ -24,6 +24,11 @@
     var currentFilter = null;
     var currentFilterValue = 1;
 
+    var filterLevel = document.querySelector('.upload-filter-level')
+    var filterLevelLine = document.querySelector('.upload-filter-level-line');
+    var filterLevelValue = document.querySelector('.upload-filter-level-val');
+    var filterPinHandler = document.querySelector('.upload-filter-level-pin'); //находим что перетаскивать
+
     function clearFilterForm() {
         uploadImgForm.reset();
         filterForm.reset();
@@ -43,85 +48,96 @@
         }
     }
 
-    var filterLevel = document. querySelector('.upload-filter-level')
-    var filterLevelScale = document.querySelector('.upload-filter-level-line');
-    var filterLevelValue = document.querySelector('.upload-filter-level-val');
-    var filterLevelPin = document.querySelector('.upload-filter-level-pin');
+    function setSliderCoords (value) { // в пикселях
+        filterPinHandler.style.left = value + 'px'; //коорд относит левого
+        filterLevelValue.style.width = value + 'px';
+    }
 
-    //var filterCoordinateStart = filterScaleCoordinates.left;
-    //var filterCoordinateEnd = filterScaleCoordinates.right;
-    var filterCoordinateX;
-    var filterScaleCoordinates = filterLevelScale.getBoundingClientRect();
+    function setSliderCoordsByPercent (value) { // 0..1
+        var filterLevelCoords = filterLevelLine.getBoundingClientRect();
+        var newValue = filterLevelCoords.width * value + 'px';
 
-    var onFilterScalePinMousedown = function (evt) {
+        filterPinHandler.style.left =  newValue;
+        filterLevelValue.style.width = newValue;
+    }
+
+    filterPinHandler.addEventListener('mousedown', function (evt) { //обработка события mousedown
         evt.preventDefault();
-        filterCoordinateX = evt.clientX;
 
-        document.addEventListener('mousemove', onFilterScalePinMouseMove);
-        document.addEventListener('mouseup', onFilterScalePinMouseUp);
-    };
+        var startCoordX = evt.clientX;
 
-    var onFilterScalePinMouseMove = function (evt) {
-        evt.preventDefault();
-        var shiftCoordinateX = filterCoordinateX - evt.clientX;
-        var newValueForElementStyle = filterLevelPin.offsetLeft - shiftCoordinateX + 'px';
-        filterCoordinateX = evt.clientX;
-        if (filterCoordinateX >= filterCoordinateStart && filterCoordinateX <= filterCoordinateEnd) {
-            filterLevelPin.style.left = newValueForElementStyle;
-            filterLevelValue.style.width = newValueForElementStyle;
-            changeFilterLevel(filterCoordinateX);
-        } else if (filterCoordinateX < filterCoordinateStart) {
-            filterCoordinateX = filterCoordinateStart;
-        } else if (filterCoordinateX > filterCoordinateEnd) {
-            filterCoordinateX = filterCoordinateEnd;
-        }
-    };
+        var onMouseMove = function (moveEvt) {
+            moveEvt.preventDefault();
 
-    var onFilterScalePinMouseUp = function (evt) {
-        evt.preventDefault();
-        document.removeEventListener('mousemove', onFilterScalePinMouseMove);
-        document.removeEventListener('mouseup', onFilterScalePinMouseUp);
-    };
+            var currentCoordX = moveEvt.clientX;
+            var shiftX = startCoordX - currentCoordX;
 
-    filterLevelPin.addEventListener('mousedown', onFilterScalePinMousedown);
+            if (shiftX === 0) return;
 
-    function changeFilterLevel(coordinate) {
+            var filterLevelCoordinates = filterLevelLine.getBoundingClientRect();
+            var filterCoordinateEnd = filterLevelCoordinates.right;
+            var filterCoordinateStart = filterLevelCoordinates.left;
+
+            if (currentCoordX > filterLevelCoordinates.right) {
+                currentCoordX = filterLevelCoordinates.right;
+            }
+
+            if (currentCoordX < filterLevelCoordinates.left) {
+                currentCoordX = filterLevelCoordinates.left;
+            }
+
+            var newCoord = currentCoordX-filterLevelCoordinates.left;
+            setSliderCoords(newCoord);
+            changeFilterLevel(newCoord / filterLevelCoordinates.width);
+        };
+
+        var onMouseUp = function (upEvt) {
+            upEvt.preventDefault();
+            filterLevel.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        };
+
+        filterLevel.addEventListener('mousemove', onMouseMove);  //передвижение мыши
+        document.addEventListener('mouseup', onMouseUp); //отпускание мыши
+    });
+
+    function changeFilterLevel(value) {
         var currentFilter = filterForm.querySelector('input[type=radio]:checked');
         var filterName = currentFilter.value;
-        var _coordinate = coordinate - filterScaleCoordinates.left;
+
         var coeficient = '';
         var styleFilter = '';
         var unit = '';
+        var level = 0;
         switch (filterName) {
             case 'chrome':
-                coeficient = 1;
+                level = value;
                 styleFilter = 'grayscale';
                 break;
             case 'sepia':
-                coeficient = 1;
+                level = value;
                 styleFilter = 'sepia';
                 break;
             case 'marvin':
-                coeficient = 100;
+                level = value * 100;
                 styleFilter = 'invert';
                 unit = '%';
                 break;
             case 'phobos':
-                coeficient = 3;
+                level = value * 3;
                 styleFilter = 'blur';
                 unit = 'px';
                 break;
             case 'heat':
-                coeficient = 3;
+                level = value * 3;
                 styleFilter = 'brightness';
                 break;
             default:
-                coeficient = '';
                 styleFilter = 'none';
         }
-        var level = _coordinate / (filterScaleCoordinates.width / coeficient);
-        picturePreview.style.filter = styleFilter + '(' + level + unit + ')';
-    }
+
+        filterFormPreview.style.filter = styleFilter + (styleFilter === 'none' ? '' : '(' + level + unit + ')' );
+    };
 
     function setFilter(evt) {
         if (evt.target.localName === 'label') {
@@ -134,8 +150,9 @@
                     filterLevel.classList.add('invisible');
                 } else {
                     filterLevel.classList.remove('invisible');
+                    setSliderCoordsByPercent(1);
+                    changeFilterLevel(1);
                 }
-                console.log(currentFilter);
             }
             filterFormPreview.className = 'filter-image-preview filter-' + evt.target.value;
         }
