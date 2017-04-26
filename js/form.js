@@ -43,94 +43,100 @@
         }
     }
 
-
-
-
-
     var filterLevel = document.querySelector('.upload-filter-level')
     var filterLevelLine = document.querySelector('.upload-filter-level-line');
     var filterLevelValue = document.querySelector('.upload-filter-level-val');
-
-    var filterLevelCoordinates = filterLevelLine.getBoundingClientRect();
-    var filterCoordinateStart = filterLevelCoordinates.left;
-    var filterCoordinateEnd = filterLevelCoordinates.right;
     var filterPinHandler = document.querySelector('.upload-filter-level-pin'); //находим что перетаскивать
+
+    function setSliderCoords (value) { // в пикселях
+        filterPinHandler.style.left = value + 'px'; //коорд относит левого
+        filterLevelValue.style.width = value + 'px';
+    }
+
+    function setSliderCoordsByPercent (value) { // 0..1
+        var filterLevelCoords = filterLevelLine.getBoundingClientRect();
+        var newValue = filterLevelCoords.width * value + 'px';
+
+        filterPinHandler.style.left =  newValue;
+        filterLevelValue.style.width = newValue;
+    }
 
     filterPinHandler.addEventListener('mousedown', function (evt) { //обработка события mousedown
         evt.preventDefault();
 
-        var startCoords = {
-            x: evt.clientX,
-        };
+        var startCoordX = evt.clientX;
 
         var onMouseMove = function (moveEvt) {
             moveEvt.preventDefault();
 
-            var shift = { //расстояние которое прошла мышка
-                x: startCoords.x - moveEvt.clientX,
-            };
-            startCoords = {
-                x: moveEvt.clientX,
-            };
-            filterPinHandler.style.left = (filterPinHandler.offsetLeft - shift.x) + 'px'; //коорд относит левого
+            var currentCoordX = moveEvt.clientX;
+            var shiftX = startCoordX - currentCoordX;
 
-            if (startCoords >= filterCoordinateStart && startCoords <= filterCoordinateEnd) {
-                filterPinHandler.style.left = (filterPinHandler.offsetLeft - shift.x) + 'px'; //коорд относит левого
-                filterLevelValue.style.width = (filterPinHandler.offsetLeft - shift.x) + 'px';
-                changeFilterLevel(startCoords);
-            } else if (startCoords < filterCoordinateStart) {
-                startCoords = filterCoordinateStart;
-            } else if (startCoords > filterCoordinateEnd) {
-                startCoords = filterCoordinateEnd;
+            if (shiftX === 0) return;
+
+            var filterLevelCoordinates = filterLevelLine.getBoundingClientRect();
+            var filterCoordinateEnd = filterLevelCoordinates.right;
+            var filterCoordinateStart = filterLevelCoordinates.left;
+
+            if (currentCoordX > filterLevelCoordinates.right) {
+                currentCoordX = filterLevelCoordinates.right;
             }
+
+            if (currentCoordX < filterLevelCoordinates.left) {
+                currentCoordX = filterLevelCoordinates.left;
+            }
+
+            var newCoord = currentCoordX-filterLevelCoordinates.left;
+            setSliderCoords(newCoord);
+            changeFilterLevel(newCoord / filterLevelCoordinates.width);
         };
 
         var onMouseUp = function (upEvt) {
             upEvt.preventDefault();
             filterLevel.removeEventListener('mousemove', onMouseMove);
-            filterLevel.removeEventListener('mouseup', onMouseUp);
+            document.removeEventListener('mouseup', onMouseUp);
         };
 
         filterLevel.addEventListener('mousemove', onMouseMove);  //передвижение мыши
-        filterLevel.addEventListener('mouseup', onMouseUp); //отпускание мыши
+        document.addEventListener('mouseup', onMouseUp); //отпускание мыши
     });
 
-    function changeFilterLevel(coordinate) {
+    function changeFilterLevel(value) {
         var currentFilter = filterForm.querySelector('input[type=radio]:checked');
         var filterName = currentFilter.value;
-        var _coordinate = coordinate - filterLevelCoordinates.left;
+
         var coeficient = '';
         var styleFilter = '';
         var unit = '';
+        var level = 0;
         switch (filterName) {
             case 'chrome':
-                coeficient = 1;
+                level = value;
                 styleFilter = 'grayscale';
                 break;
             case 'sepia':
-                coeficient = 1;
+                level = value;
                 styleFilter = 'sepia';
                 break;
             case 'marvin':
-                coeficient = 100;
+                level = value * 100;
                 styleFilter = 'invert';
                 unit = '%';
                 break;
             case 'phobos':
-                coeficient = 3;
+                level = value * 3;
                 styleFilter = 'blur';
                 unit = 'px';
                 break;
             case 'heat':
-                coeficient = 3;
+                level = value * 3;
                 styleFilter = 'brightness';
                 break;
             default:
-                coeficient = '';
                 styleFilter = 'none';
         }
-        var level = _coordinate / (filterLevelCoordinates.width / coeficient);
-        filterFormPreview.style.filter = styleFilter + '(' + level + unit + ')';
+
+        filterFormPreview.style.filter = styleFilter + (styleFilter === 'none' ? '' : '(' + level + unit + ')' );
     };
 
     function setFilter(evt) {
@@ -144,8 +150,9 @@
                     filterLevel.classList.add('invisible');
                 } else {
                     filterLevel.classList.remove('invisible');
+                    setSliderCoordsByPercent(1);
+                    changeFilterLevel(1);
                 }
-                console.log(currentFilter);
             }
             filterFormPreview.className = 'filter-image-preview filter-' + evt.target.value;
         }
