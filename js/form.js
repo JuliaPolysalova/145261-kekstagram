@@ -37,7 +37,7 @@
         filterFormPreview.className = 'filter-image-preview';
     }
 
-    function setScale(sizeLimit, sign) {
+    /*function setScale(sizeLimit, sign) {
         var stepSize;
         var sizeValue;
         if (filterFormResizeInput.value !== sizeLimit) {
@@ -47,6 +47,19 @@
             filterFormPreview.style.transform = 'scale(' + sizeValue / 100 + ')';
         }
     }
+    filterFormPlusBtn.addEventListener('click', function(evt) {
+        setScale(MAX_RESIZE, 1);
+    });
+
+    filterFormMinusBtn.addEventListener('click', function(evt){
+        setScale(MIN_RESIZE, 0);
+    });*/
+
+    window.initializeScale(100, filterFormPlusBtn, filterFormMinusBtn, MAX_RESIZE, MIN_RESIZE, STEP_RESIZE, function () {
+        var sizeValue = parseInt(filterFormResizeInput.value, 10);
+        filterFormResizeInput.setAttribute('value', sizeValue + '%');
+        filterFormPreview.style.transform = 'scale(' + sizeValue / 100 + ')';
+    });
 
     function setSliderCoords (value) { // в пикселях
         filterPinHandler.style.left = value + 'px'; //коорд относит левого
@@ -139,13 +152,16 @@
         filterFormPreview.style.filter = styleFilter + (styleFilter === 'none' ? '' : '(' + level + unit + ')' );
     };
 
-    function setFilter(evt) {
+
+    window.initializeFilters(filterControls, setFilter); //????????
+
+    var setFilter = function(evt) {
         if (evt.target.localName === 'label') {
             evt.target.click();
         } else if (evt.target.localName === 'input' && evt.target.checked) {
             if (currentFilter !== evt.target.value) {
                 currentFilterValue = 1;
-                currentFilter = evt.target.value;
+                currentFilter = evt.target.value
                 if(currentFilter == 'none') {
                     filterLevel.classList.add('invisible');
                 } else {
@@ -197,13 +213,13 @@
             }
         });
 
-        filterFormPlusBtn.addEventListener('click', function(evt) {
+        /*filterFormPlusBtn.addEventListener('click', function(evt) {
             setScale(MAX_RESIZE, 1);
         });
 
         filterFormMinusBtn.addEventListener('click', function(evt){
             setScale(MIN_RESIZE, 0);
-        });
+        });*/
 
         filterControls.addEventListener('click', function(evt) {
             setFilter(evt);
