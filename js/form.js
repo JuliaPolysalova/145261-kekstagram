@@ -17,9 +17,9 @@
 
     var MAX_RESIZE = '100%';
     var MIN_RESIZE = '25%';
-    var STEP_RESIZE = 25;
+    var STEP_RESIZE = '25%';
     var ESCAPE_KEY_CODE = 27;
-    var ENTER_KEY_CODE = 13;
+//    var ENTER_KEY_CODE = 13;
 
     var currentFilter = null;
     var currentFilterValue = 1;
@@ -37,26 +37,8 @@
         filterFormPreview.className = 'filter-image-preview';
     }
 
-    /*function setScale(sizeLimit, sign) {
-        var stepSize;
-        var sizeValue;
-        if (filterFormResizeInput.value !== sizeLimit) {
-            stepSize = sign ? STEP_RESIZE : -STEP_RESIZE;
-            sizeValue = parseInt(filterFormResizeInput.value, 10) + stepSize;
-            filterFormResizeInput.setAttribute('value', sizeValue + '%');
-            filterFormPreview.style.transform = 'scale(' + sizeValue / 100 + ')';
-        }
-    }
-    filterFormPlusBtn.addEventListener('click', function(evt) {
-        setScale(MAX_RESIZE, 1);
-    });
-
-    filterFormMinusBtn.addEventListener('click', function(evt){
-        setScale(MIN_RESIZE, 0);
-    });*/
-
-    window.initializeScale(100, filterFormPlusBtn, filterFormMinusBtn, MAX_RESIZE, MIN_RESIZE, STEP_RESIZE, function () {
-        var sizeValue = parseInt(filterFormResizeInput.value, 10);
+    window.initializeScale(100, filterFormPlusBtn, filterFormMinusBtn, MAX_RESIZE, MIN_RESIZE, STEP_RESIZE, function (sizeValue) { //масштабируемость
+        //var sizeValue = parseInt(filterFormResizeInput.value, 10);
         filterFormResizeInput.setAttribute('value', sizeValue + '%');
         filterFormPreview.style.transform = 'scale(' + sizeValue / 100 + ')';
     });
@@ -118,7 +100,7 @@
         var currentFilter = filterForm.querySelector('input[type=radio]:checked');
         var filterName = currentFilter.value;
 
-        var coeficient = '';
+        //var coeficient = '';
         var styleFilter = '';
         var unit = '';
         var level = 0;
@@ -150,33 +132,24 @@
         }
 
         filterFormPreview.style.filter = styleFilter + (styleFilter === 'none' ? '' : '(' + level + unit + ')' );
-    };
+    }
 
+    //var setFilter = ;
 
-    window.initializeFilters(filterControls, setFilter); //????????
-
-    var setFilter = function(evt) {
-        if (evt.target.localName === 'label') {
-            evt.target.click();
-        } else if (evt.target.localName === 'input' && evt.target.checked) {
-            if (currentFilter !== evt.target.value) {
-                currentFilterValue = 1;
-                currentFilter = evt.target.value
-                if(currentFilter == 'none') {
-                    filterLevel.classList.add('invisible');
-                } else {
-                    filterLevel.classList.remove('invisible');
-                    setSliderCoordsByPercent(1);
-                    changeFilterLevel(1);
-                }
-            }
-            filterFormPreview.className = 'filter-image-preview filter-' + evt.target.value;
+    window.initializeFilters(filterControls, function () {
+        currentFilterValue = 1;
+        //currentFilter = evt.target.value
+        if(currentFilter == 'none') {
+            filterLevel.classList.add('invisible');
+        } else {
+            filterLevel.classList.remove('invisible');
+            setSliderCoordsByPercent(1);
         }
-    }
+        changeFilterLevel(1);
+        filterLevel.classList.remove('invisible');
 
-    function isEnter(evt) {
-        return evt.keyCode === ENTER_KEY_CODE;
-    }
+        console.log(currentFilter);
+    });
 
     function isEscape(evt) {
         return evt.keyCode === ESCAPE_KEY_CODE;
@@ -221,7 +194,7 @@
             setScale(MIN_RESIZE, 0);
         });*/
 
-        filterControls.addEventListener('click', function(evt) {
+        /*filterControls.addEventListener('click', function(evt) {
             setFilter(evt);
         });
 
@@ -230,7 +203,7 @@
                 //evt.preventDefault();
                 setFilter(evt);
             }
-        });
+        });*/
 
         document.getElementById('upload-file').addEventListener('change', showUploadOverlay);
 
