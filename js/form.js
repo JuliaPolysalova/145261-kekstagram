@@ -29,11 +29,13 @@
     var filterLevelValue = document.querySelector('.upload-filter-level-val');
     var filterPinHandler = document.querySelector('.upload-filter-level-pin'); //находим что перетаскивать
 
-    window.initializeScale(100, filterFormPlusBtn, filterFormMinusBtn, MAX_RESIZE, MIN_RESIZE, STEP_RESIZE, function (sizeValue) { //масштабируемость
+    window.initializeScale(100, filterFormPlusBtn, filterFormMinusBtn, MAX_RESIZE, MIN_RESIZE, STEP_RESIZE, resizeFilteredImage);
+
+    function resizeFilteredImage (sizeValue) {
         //var sizeValue = parseInt(filterFormResizeInput.value, 10);
         filterFormResizeInput.setAttribute('value', sizeValue + '%');
         filterFormPreview.style.transform = 'scale(' + sizeValue / 100 + ')';
-    });
+    }
 
     function setSliderCoords (value) { // в пикселях
         filterPinHandler.style.left = value + 'px'; //коорд относит левого
@@ -160,10 +162,10 @@
     function clearFilterForm() {
         uploadImgForm.reset();
         filterForm.reset(); //что это??
-        filterFormResizeInput.setAttribute('value', '100%');
-        filterFormPreview.style.transform = 'scale(1)';
+        filterFormResizeInput.setAttribute('value', MAX_RESIZE);
+        resizeFilteredImage(100);
         filterFormPreview.className = 'filter-image-preview';
-
+        changeFilterLevel(1);
         filterLevel.classList.add('invisible');
     }
 
