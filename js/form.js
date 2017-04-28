@@ -153,8 +153,6 @@
     };
 
 
-    window.initializeFilters(filterControls, setFilter); //????????
-
     var setFilter = function(evt) {
         if (evt.target.localName === 'label') {
             evt.target.click();
@@ -172,7 +170,8 @@
             }
             filterFormPreview.className = 'filter-image-preview filter-' + evt.target.value;
         }
-    }
+    };
+    window.initializeFilters(filterControls, setFilter); //????????
 
     function isEnter(evt) {
         return evt.keyCode === ENTER_KEY_CODE;
