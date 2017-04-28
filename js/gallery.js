@@ -16,34 +16,6 @@
 
         containerElement.appendChild(fragment);
     }*/
-
-
-
-    function getUniqueClickListener(photoData) {
-        debugger;
-        return function (evt) {
-            evt.preventDefault();
-            preview.openPicture(photoData);
-        }
-    }
-
-    function initEventListenersForPhotos(photoObjectsData) {
-        //debugger;
-        //При нажатии на любой из элементов .picture должен показываться элемент .gallery-overlay с подробным описанием картинки
-        for (var i = 0; i < picturesContainerAll.length; i++) {
-            picturesContainerAll[i].addEventListener('click', getUniqueClickListener(photoObjectsData[i]));
-        }
-    }
-
-    var loadHandler = function (photoDataArray) {
-        var fragment = document.createDocumentFragment();
-
-        for (var i = 0; i < photoDataArray.length; i++) {
-            fragment.appendChild(picture.createPhotoElement(photoDataArray[i]));
-        }
-        picturesContainer.appendChild(fragment);
-    };
-
     var errorHandler = function (errorMessage) {
         var node = document.createElement('div');
         node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
@@ -56,18 +28,35 @@
         document.body.insertAdjacentElement('afterbegin', node);
     }
 
-    function init() {
-        var photosObjectData = data.getData();
-        //addPhotos(picturesContainer, photosObjectData);
-        preview.openPicture(photosObjectData[0]);
+    function init (photoDataArray) {
+        var fragment = document.createDocumentFragment();
+
+        for (var i = 0; i < photoDataArray.length; i++) {
+            fragment.appendChild(picture.createPhotoElement(photoDataArray[i]));
+        }
+
+        picturesContainer.appendChild(fragment);
+        preview.openPicture(photoDataArray[0]);
+
         picturesContainerAll = document.querySelectorAll('.picture');
-
-        window.load(loadHandler, errorHandler);
-
-        initEventListenersForPhotos(photosObjectData);
+        initEventListenersForPhotos(photoDataArray);
     }
 
-    init();
+    function getUniqueClickListener(photoData) {
+        return function (evt) {
+            evt.preventDefault();
+            preview.openPicture(photoData);
+        }
+    }
+
+    function initEventListenersForPhotos(photoObjectsData) {
+        //При нажатии на любой из элементов .picture должен показываться элемент .gallery-overlay с подробным описанием картинки
+        for (var i = 0; i < picturesContainerAll.length; i++) {
+            picturesContainerAll[i].addEventListener('click', getUniqueClickListener(photoObjectsData[i]));
+        }
+    }
+
+    window.load(init, errorHandler());
 })();
 /*'use strict';
 
