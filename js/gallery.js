@@ -5,7 +5,8 @@
     var picturesContainer = document.querySelector('.pictures');
     var picturesContainerAll = null;
 
-    function addPhotos(containerElement, photoDataArray) {
+
+    /*function addPhotos(containerElement, photoDataArray) {
         var fragment = document.createDocumentFragment();
 
         for (var i = 0; i < photoDataArray.length; i++) {
@@ -14,12 +15,25 @@
         }
 
         containerElement.appendChild(fragment);
-    }
+    }*/
+
+    window.load(function (photoDataArray) {
+        var fragment = document.createDocumentFragment();
+
+        for (var i = 0; i < photoDataArray.length; i++) {
+            fragment.appendChild(picture.createPhotoElement(photoDataArray[i]));
+        }
+        picturesContainer.appendChild(fragment);
+
+        //userDialog.querySelector('.setup-similar').classList.remove('hidden');
+    });
 
     function getUniqueClickListener(photoData) {
         return function (evt) {
+            debugger;
             evt.preventDefault();
             preview.openPicture(photoData);
+            debugger;
         }
     }
 
@@ -32,7 +46,7 @@
 
     function init() {
         var photosObjectData = data.getData();
-        addPhotos(picturesContainer, photosObjectData);
+        //addPhotos(picturesContainer, photosObjectData);
         preview.openPicture(photosObjectData[0]);
 
         picturesContainerAll = document.querySelectorAll('.picture');

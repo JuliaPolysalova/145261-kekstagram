@@ -5,6 +5,21 @@ window.initializeFilters = function (controls, callback) {
         return evt.keyCode === 13;
     };
 
+    var setFilter = function (evt) {
+        //debugger;
+        var filterFormPreview = document.querySelector('.filter-image-preview');
+        var currentFilter = evt.target;
+
+        if (evt.target.localName === 'label') {
+            evt.target.click();
+        } else if (evt.target.localName === 'input' && evt.target.checked) {
+            if (currentFilter !== evt.target.value){
+                callback(currentFilter);
+            }
+            filterFormPreview.className = 'filter-image-preview filter-' + evt.target.value;
+        }
+    };
+
     controls.addEventListener('click', function(evt) {
         setFilter(evt);
     });
@@ -15,17 +30,4 @@ window.initializeFilters = function (controls, callback) {
         }
     });
 
-    var setFilter = function (evt) {
-        var currentFilter = evt.target.value;
-        var filterFormPreview = document.querySelector('.filter-image-preview');
-
-        if (evt.target.localName === 'label') {
-            evt.target.click();
-        } else if (evt.target.localName === 'input' && evt.target.checked) {
-            if (currentFilter !== evt.target.value){
-                callback(currentFilter);
-            }
-            filterFormPreview.className = 'filter-image-preview filter-' + evt.target.value;
-        }
-     }
-}
+};

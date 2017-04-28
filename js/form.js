@@ -21,21 +21,13 @@
     var ESCAPE_KEY_CODE = 27;
 //    var ENTER_KEY_CODE = 13;
 
-    var currentFilter = null;
+    //var currentFilter = null;
     var currentFilterValue = 1;
 
     var filterLevel = document.querySelector('.upload-filter-level')
     var filterLevelLine = document.querySelector('.upload-filter-level-line');
     var filterLevelValue = document.querySelector('.upload-filter-level-val');
     var filterPinHandler = document.querySelector('.upload-filter-level-pin'); //находим что перетаскивать
-
-    function clearFilterForm() {
-        uploadImgForm.reset();
-        filterForm.reset();
-        filterFormResizeInput.setAttribute('value', '100%');
-        filterFormPreview.style.transform = 'scale(1)';
-        filterFormPreview.className = 'filter-image-preview';
-    }
 
     window.initializeScale(100, filterFormPlusBtn, filterFormMinusBtn, MAX_RESIZE, MIN_RESIZE, STEP_RESIZE, function (sizeValue) { //масштабируемость
         //var sizeValue = parseInt(filterFormResizeInput.value, 10);
@@ -70,8 +62,8 @@
             if (shiftX === 0) return;
 
             var filterLevelCoordinates = filterLevelLine.getBoundingClientRect();
-            var filterCoordinateEnd = filterLevelCoordinates.right;
-            var filterCoordinateStart = filterLevelCoordinates.left;
+            //var filterCoordinateEnd = filterLevelCoordinates.right;
+            //var filterCoordinateStart = filterLevelCoordinates.left;
 
             if (currentCoordX > filterLevelCoordinates.right) {
                 currentCoordX = filterLevelCoordinates.right;
@@ -134,22 +126,21 @@
         filterFormPreview.style.filter = styleFilter + (styleFilter === 'none' ? '' : '(' + level + unit + ')' );
     }
 
-    //var setFilter = ;
-
-    window.initializeFilters(filterControls, function () {
+    window.initializeFilters(filterControls, function (currentFilter, evt) {
         currentFilterValue = 1;
-        //currentFilter = evt.target.value
-        if(currentFilter == 'none') {
+        //currentFilter = evt.target.value;
+
+        if(currentFilter.value == 'none') {
             filterLevel.classList.add('invisible');
+            changeFilterLevel(1);
         } else {
             filterLevel.classList.remove('invisible');
             setSliderCoordsByPercent(1);
+            changeFilterLevel(1);
         }
-        changeFilterLevel(1);
-        filterLevel.classList.remove('invisible');
-
-        console.log(currentFilter);
+        console.log(currentFilter.value);
     });
+
 
     function isEscape(evt) {
         return evt.keyCode === ESCAPE_KEY_CODE;
@@ -164,6 +155,13 @@
     function showUploadOverlay(evt) {
         uploadOverlay.classList.remove('invisible'); //открытие ф. кадрирования
         document.addEventListener('keydown', onEscPressUpload);
+    }
+
+    function clearFilterForm() {
+        uploadImgForm.reset();
+        filterForm.reset(); //что это??
+        filterFormResizeInput.setAttribute('value', '100%');
+        filterFormPreview.style.transform = 'scale(1)';
     }
 
     function hideUploadOverlay(evt) {
@@ -185,14 +183,6 @@
                 evt.stopPropagation();
             }
         });
-
-        /*filterFormPlusBtn.addEventListener('click', function(evt) {
-            setScale(MAX_RESIZE, 1);
-        });
-
-        filterFormMinusBtn.addEventListener('click', function(evt){
-            setScale(MIN_RESIZE, 0);
-        });*/
 
         /*filterControls.addEventListener('click', function(evt) {
             setFilter(evt);
