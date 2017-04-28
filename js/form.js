@@ -19,9 +19,7 @@
     var MIN_RESIZE = '25%';
     var STEP_RESIZE = '25%';
     var ESCAPE_KEY_CODE = 27;
-//    var ENTER_KEY_CODE = 13;
-
-    //var currentFilter = null;
+    
     var currentFilterValue = 1;
 
     var filterLevel = document.querySelector('.upload-filter-level')
@@ -64,8 +62,6 @@
             if (shiftX === 0) return;
 
             var filterLevelCoordinates = filterLevelLine.getBoundingClientRect();
-            //var filterCoordinateEnd = filterLevelCoordinates.right;
-            //var filterCoordinateStart = filterLevelCoordinates.left;
 
             if (currentCoordX > filterLevelCoordinates.right) {
                 currentCoordX = filterLevelCoordinates.right;
@@ -93,8 +89,6 @@
     function changeFilterLevel(value) {
         var currentFilter = filterForm.querySelector('input[type=radio]:checked');
         var filterName = currentFilter.value;
-
-        //var coeficient = '';
         var styleFilter = '';
         var unit = '';
         var level = 0;
@@ -130,7 +124,6 @@
 
     window.initializeFilters(filterControls, function (currentFilter, evt) {
         currentFilterValue = 1;
-        //currentFilter = evt.target.value;
 
         if(currentFilter.value == 'none') {
             filterLevel.classList.add('invisible');
@@ -188,16 +181,6 @@
             }
         });
 
-        /*filterControls.addEventListener('click', function(evt) {
-            setFilter(evt);
-        });
-
-        filterControls.addEventListener('keydown', function(evt) {
-            if (isEnter(evt)){
-                //evt.preventDefault();
-                setFilter(evt);
-            }
-        });*/
 
         document.getElementById('upload-file').addEventListener('change', showUploadOverlay);
 
